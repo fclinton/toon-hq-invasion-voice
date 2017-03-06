@@ -1,5 +1,5 @@
 /**
- * Created by Foster on 2/20/2017.
+ * Created by fclinton foster626@gmail.com on 2/20/2017.
  */
 // Import required java libraries
 
@@ -33,7 +33,8 @@ public class alexaservlet extends HttpServlet {
         byte[] buffer=new byte[request.getContentLength()];
         is.read(buffer);
         SpeechletRequestSignatureVerifier.checkRequestSignature(buffer,request.getHeader("Signature"),request.getHeader("SignatureCertChainUrl"));
-        message=common.getMessage();
+        InvasionCollection invasionCollection = new InvasionCollection();
+        message=invasionCollection.getMessage();
         // Set response content type
         response.setContentType("application/json");
         Matcher matcher = Pattern.compile("[^a-zA-Z\\d\\s,.]").matcher(message);
