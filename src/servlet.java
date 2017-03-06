@@ -29,7 +29,8 @@ public class servlet extends HttpServlet {
                       HttpServletResponse response)
             throws ServletException, IOException
     {
-        message=common.getMessage();
+        InvasionCollection invasionCollection = new InvasionCollection();
+        message=invasionCollection.getMessage();
         // Set response content type
         response.setContentType("application/json");
         Matcher matcher = Pattern.compile("[^a-zA-Z\\d\\s,.]").matcher(message);

@@ -29,35 +29,4 @@ public class common {
             is.close();
         }
     }
-    public static String getMessage(){
-        try {
-            JSONObject jsonObject = readJsonFromUrl("http://toonhq.org/api/v1/invasion/");
-            JSONArray invasions = jsonObject.getJSONArray("invasions");
-            StringBuilder sb = new StringBuilder();
-            if(invasions.length()==0){
-                sb.append("There are no invasons");
-                return "There are no invasions";
-            }else {
-                sb.append("There are ");
-            }
-            for (int i = 0; i < invasions.length(); i++) {
-                JSONObject thisInvasion = invasions.getJSONObject(i);
-                sb.append(thisInvasion.getString("cog"));
-                sb.append("s in ");
-                sb.append(thisInvasion.getString("district"));
-                if(i+1==invasions.length()){
-                    sb.append(".");
-                }else if(i+2==invasions.length()){
-                    sb.append(", and ");
-                }else{
-                    sb.append(", ");
-                }
-
-            }
-            return sb.toString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "There are no invasions";
-    }
 }
