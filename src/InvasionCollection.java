@@ -1,7 +1,11 @@
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -14,9 +18,18 @@ public class InvasionCollection {
         try {
             JSONObject jsonObject = common.readJsonFromUrl("http://toonhq.org/api/v1/invasion/");
             JSONArray invasions = jsonObject.getJSONArray("invasions");
-            for(int i=0;i<invasions.length();i++){
+            for (int i = 0; i < invasions.length(); i++) {
                 cogInvasions.add(new CogInvasion(invasions.getJSONObject(i)));
             }
+        } catch (JSONException e){
+            try {
+                InputStream in = new URL("http://toonhq.org/api/v1/invasion/").openStream();
+                e.addSuppressed(new Exception("TOONHQ RETURNED:" + IOUtils.toString(in)));
+                IOUtils.closeQuietly(in);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+             }
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
