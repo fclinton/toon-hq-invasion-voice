@@ -3,13 +3,16 @@
  */
 // Import required java libraries
 
+import org.json.HTTP;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.regex.Matcher;
@@ -27,14 +30,34 @@ public class servlet extends HttpServlet {
 
     public void doPost(HttpServletRequest request,
                       HttpServletResponse response)
-            throws ServletException, IOException
-    {
+            throws ServletException, IOException {
         InvasionCollection invasionCollection = new InvasionCollection();
-        message=invasionCollection.getMessage();
+        StringBuffer jb = new StringBuffer();
+        String line = null;
+        JSONObject jsonObject = null;
+        try {
+            BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null)
+                jb.append(line);
+        } catch (Exception e) { /*report an error*/ }
+
+        try {
+            jsonObject = new JSONObject(jb.toString());
+        } catch (JSONException e) {
+            // crash and burn
+            throw new IOException("Error parsing JSON request string");
+        }
+        switch (jsonObject.getJSONObject("result").getString("action")) {
+            case "specificinvasion":
+                message = invasionCollection.getMessage(jsonObject.getJSONObject("result").getJSONObject("parameters").getString("cog"));
+                break;
+            default:
+                message = invasionCollection.getMessage();
+        }
         // Set response content type
         response.setContentType("application/json");
         Matcher matcher = Pattern.compile("[^a-zA-Z\\d\\s,.]").matcher(message);
-        message=matcher.replaceAll("");
+        message = matcher.replaceAll("");
         // Actual logic goes here.
         PrintWriter out = response.getWriter();
         StringBuilder sb = new StringBuilder();
@@ -53,12 +76,11 @@ public class servlet extends HttpServlet {
                 "  }\n" +
                 "  }");
         sb.append("}");
-        String outputString=sb.toString();
+        String outputString = sb.toString();
 
         out.write(outputString);
         out.close();
     }
-
     public void destroy()
     {
         // do nothing.

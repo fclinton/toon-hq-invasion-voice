@@ -45,6 +45,8 @@ public class CogInvasion {
         adjustNames();
     }
     private void adjustNames(){
+        if(Objects.equals(cogName, "The Mingler"))cogName="Mingler";
+        if(Objects.equals(cogName, "Mover & Shaker"))cogName="Mover and Shaker";
         if(Objects.equals(cogName, "The Big Cheese"))cogName="Big Cheese";
         if(Objects.equals(cogName, "Two-Face"))cogName="Two Face";
     }//Change name for cogs in order to be easily listed, formed for dictation
