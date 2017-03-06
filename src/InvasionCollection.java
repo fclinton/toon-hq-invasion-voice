@@ -67,7 +67,7 @@ public class InvasionCollection {
             if(cogInvasion.getCogName().equalsIgnoreCase(specificCogName))specificInvasions.add(cogInvasion);
         }
         if(specificInvasions.size()==0){
-            return "There are no invasions.";
+            return "There are no "+specificCogName+ " invasions.";
         }
         StringBuilder sb = new StringBuilder();
         sb.append("There is");

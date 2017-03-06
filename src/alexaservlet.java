@@ -4,11 +4,14 @@
 // Import required java libraries
 
 import com.amazon.speech.speechlet.authentication.SpeechletRequestSignatureVerifier;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -29,12 +32,37 @@ public class alexaservlet extends HttpServlet {
                       HttpServletResponse response)
             throws ServletException, IOException
     {
-        InputStream is = request.getInputStream();
+        String line = null;
+        JSONObject jsonObject = null;
+        StringBuffer jb = new StringBuffer();
+        try {
+            BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null)
+                jb.append(line);
+        } catch (Exception e) { /*report an error*/ }
+
+        try {
+            jsonObject = new JSONObject(jb.toString());
+        } catch (JSONException e) {
+            // crash and burn
+            throw new IOException("Error parsing JSON request string");
+        }
         byte[] buffer=new byte[request.getContentLength()];
-        is.read(buffer);
+        buffer=jb.toString().getBytes();
         SpeechletRequestSignatureVerifier.checkRequestSignature(buffer,request.getHeader("Signature"),request.getHeader("SignatureCertChainUrl"));
         InvasionCollection invasionCollection = new InvasionCollection();
-        message=invasionCollection.getMessage();
+
+
+
+        switch (jsonObject.getJSONObject("request").getJSONObject("intent").getString("name")) {
+            case "Specificcog":
+                message = invasionCollection.getMessage(jsonObject.getJSONObject("request")
+                        .getJSONObject("intent").getJSONObject("slots").getJSONObject("cogslot")
+                        .getString("value"));
+                break;
+            default:
+                message = invasionCollection.getMessage();
+        }
         // Set response content type
         response.setContentType("application/json");
         Matcher matcher = Pattern.compile("[^a-zA-Z\\d\\s,.]").matcher(message);
