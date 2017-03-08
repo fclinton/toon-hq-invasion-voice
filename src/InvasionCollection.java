@@ -62,12 +62,14 @@ public class InvasionCollection {
     }
     public String getMessage(String specificCogName){
         if(Objects.equals(specificCogName, "blood sucker"))specificCogName="bloodsucker";
+        if(Objects.equals(specificCogName, "headhunter"))specificCogName="head hunter";
+        if(Objects.equals(specificCogName, "bigwig"))specificCogName="big wig";
         ArrayList<CogInvasion> specificInvasions = new ArrayList<>();
         for(CogInvasion cogInvasion:cogInvasions){
             if(cogInvasion.getCogName().equalsIgnoreCase(specificCogName))specificInvasions.add(cogInvasion);
         }
         if(specificInvasions.size()==0){
-            return "There are no "+specificCogName+ " invasions.";
+            return "There are currently no "+specificCogName+ " invasions.";
         }
         StringBuilder sb = new StringBuilder();
         sb.append("There is");
